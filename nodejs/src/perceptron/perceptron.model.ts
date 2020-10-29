@@ -1,5 +1,7 @@
 import { Random } from "../random";
 
+export type PerceptronDataSample = {in: number[], out: number[]}
+
 export class Perceptron {
   qtd_in: number;
   qtd_out: number;
@@ -15,7 +17,7 @@ export class Perceptron {
     this.weights = this.generateWeightsMatrix(qtd_in, qtd_out);
   }
 
-  generateWeightsMatrix(qtd_in: number, qtd_out: number) {
+  generateWeightsMatrix(qtd_in: number, qtd_out: number): number[][] {
     return Array.from(
       {length: qtd_in + 1}, 
       () => this.generateWeightsVector(qtd_out)
@@ -31,37 +33,59 @@ export class Perceptron {
 
   train(x: number[], y: number[]): number[] {
     const input = [1, ...x];
-    const output = [...y]
+    const output = [...y];
 
-
-    const u = output.map(
-      (y, index_neuron) => this.weights.reduce(
-        (acc, weight_vector, input_index) => acc + input[input_index] * weight_vector[index_neuron],
-        0
-      )
-    );
-
+    const u = this.getAllInputSum(input, output.length, this.weights);
+    
     const o = u.map(
-      u => 1 / (1 + Math.exp(-u))
+      value => this.activationFunction(value)
     );
 
     const deltas = input.map(
-      x => o.map(
-        (o, index_neuron) => this.ni * (output[index_neuron] - o) * x
-      )
+      x => this.getInputDeltas(output, o, x)
     );
-    
 
-    console.log(u, o, deltas)
-
-    this.weights = this.weights.map(
-      (input_vector, input_index) => input_vector.map(
-        (current_weight, output_index) => current_weight + deltas[input_index][output_index]
-      )
-    );
+    this.weights = this.getNewWeights(this.weights, deltas);
 
     return o;
   }
-}
 
-export type PerceptronDataSample = {in: number[], out: number[]}
+  getAllInputSum(input, output_count, weights) {
+    return Array.from(
+      {length: output_count},
+      (_, i) => {
+        const neuron_weights = weights.map(weight_vector => weight_vector[i]);
+        return this.getNeuronInputSum(input, neuron_weights);
+      }
+    );
+  }
+
+  getNeuronInputSum(input, neuron_weights: number[]) {
+    return neuron_weights.reduce(
+      (acc, weight, i) => acc + weight * input[i]
+    );
+  }
+
+  activationFunction(u) {
+    return 1 / (1 + Math.exp(-u));
+  }
+
+
+  getInputDeltas(output_vector, o_vector, x): number[] {
+    return o_vector.map(
+      (o, i) => this.ni * (output_vector[i] - o) * x
+    );
+  }
+
+  getNewWeights(weights, deltas): number[][] {
+    return weights.map(
+      (neurons_weights, input_index) => this.getNewNeuronsWeights(deltas, neurons_weights, input_index)
+    );
+  }
+
+  getNewNeuronsWeights(deltas, neurons_weights, input_index) {
+    return neurons_weights.map(
+      (current_weight, neuron_index) => current_weight + deltas[input_index][neuron_index]
+    )
+  }
+}

@@ -21,11 +21,14 @@ export class PerceptronTrainer {
     const ni = 0.3;
     const perceptron: Perceptron = new Perceptron(this.qtd_in, this.qtd_out, ni);
 
+    console.log('Época \t|\t Erro da época \t\t|\t Diferença entre o erro da época anterior');
+    console.log('----- \t|\t ----------------- \t|\t ----------------------------------------');
+    console.log('      \t|\t                   \t|\t                                         ');
+
+    let before_error_value = 0;
+    
 		for (let e = 0; e < this.times; e++) {
-      let erroEpoca: number = 0;
-
-      console.log(`\n======== Época ${e} ========\n`);
-
+      let erro_epoca: number = 0;
 
 			for (let a = 0; a < this.data.length; a++) {
         const sample: PerceptronDataSample = this.data[a];
@@ -33,15 +36,18 @@ export class PerceptronTrainer {
         const x: number[] = sample.in;
         const y: number[] = sample.out;
           
-        console.log(`   ==== Amostra ${a} ====`);
         const o: number[] = perceptron.train(x, y);
 
-        
-				//Calcular o erro da amostra que foi treinada.
-				const erroAmostra = 0; //substituir o zero pelo calculo
-				
-				erroEpoca += erroAmostra;
-			}
+        const errors = y.map((output, i) => Math.abs(output - o[i]));
+
+				const erro_amostra = errors.reduce((acc, error_neuron) => acc + error_neuron);
+				erro_epoca += erro_amostra;
+      }
+
+      const diff = Math.abs(erro_epoca - before_error_value);
+      console.log(`${e} \t|\t ${erro_epoca} \t|\t ${diff}`);
+
+      before_error_value = erro_epoca;
     }
   }
 }

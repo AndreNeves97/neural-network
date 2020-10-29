@@ -3,7 +3,9 @@ import { PerceptronDataSample } from "./perceptron/perceptron.model";
 
 
 function main() {
-  const args = process.argv.slice(2);;
+  const args = process.argv.slice(2);
+
+  console.log('\n')
 
   const problem = args[0];
 
@@ -23,7 +25,7 @@ function main() {
     or();
   }
 
-  if(problem === 'or') {
+  if(problem === 'xor') {
     xor();
   }
 
@@ -43,7 +45,7 @@ function robot() {
     { in: [1, 1, 1], out: [0, 0] }
   ];
 
-  const times = 4;
+  const times = 50000;
   const trainer = new PerceptronTrainer(times, data);
   trainer.train();
 }
