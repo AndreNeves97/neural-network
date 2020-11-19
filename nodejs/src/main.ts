@@ -1,3 +1,4 @@
+import { readFlags } from "./flags/read-flags";
 import { PerceptronTrainer } from "./perceptron/perceptron-trainer.model";
 import { PerceptronDataSample } from "./perceptron/perceptron.model";
 
@@ -17,16 +18,16 @@ function main() {
     and();
   }
 
-  if(problem === 'and') {
-    and();
-  }
-
   if(problem === 'or') {
     or();
   }
 
   if(problem === 'xor') {
     xor();
+  }
+
+  if(problem === 'flags') {
+    flags();
   }
 
   process.exit();
@@ -42,10 +43,10 @@ function robot() {
     { in: [1, 0, 0], out: [1, 0] },
     { in: [1, 0, 1], out: [1, 1] },
     { in: [1, 1, 0], out: [1, 0] },
-    { in: [1, 1, 1], out: [0, 0] }
+    { in: [1, 1, 1], out: [1, 0] }
   ];
 
-  const times = 50000;
+  const times = 1000;
   const trainer = new PerceptronTrainer(times, data);
   trainer.train();
 }
@@ -58,7 +59,7 @@ function and() {
     { in: [1, 1], out: [1] }
   ];
 
-  const times = 50000;
+  const times = 1000;
   const trainer = new PerceptronTrainer(times, data);
   trainer.train();
 }
@@ -71,7 +72,7 @@ function or() {
     { in: [1, 1], out: [1] }
   ];
 
-  const times = 50000;
+  const times = 1000;
   const trainer = new PerceptronTrainer(times, data);
   trainer.train();
 }
@@ -84,7 +85,16 @@ function xor() {
     { in: [1, 1], out: [0] }
   ];
 
-  const times = 50000;
+  const times = 1000;
+  const trainer = new PerceptronTrainer(times, data);
+  trainer.train();
+}
+
+
+function flags() {
+  const data: PerceptronDataSample[] = readFlags();
+
+  const times = 100;
   const trainer = new PerceptronTrainer(times, data);
   trainer.train();
 }
