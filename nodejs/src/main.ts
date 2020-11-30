@@ -94,7 +94,7 @@ function xor() {
 function flags() {
   const data: PerceptronDataSample[] = readFlags();
 
-  const times = 100;
+  const times = 50000;
   const trainer = new PerceptronTrainer(times, data);
   trainer.train();
 }

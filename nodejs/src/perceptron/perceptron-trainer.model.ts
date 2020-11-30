@@ -20,7 +20,7 @@ export class PerceptronTrainer {
   }
 
   train() {
-    const ni = 0.3;
+    const ni = 0.001;
     this.perceptron = new Perceptron(this.qtd_in, this.qtd_out, ni);
 
     console.log('Época \t|\t Erro de aproximação \t|\t Erro de classificação ');

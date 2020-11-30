@@ -45,6 +45,9 @@ function getOutputVector(line) {
   return output;
 }
 
+
+// Possibilidade de melhoria:
+//    Não usar índices para cor, e sim uma entrada para cada cor
 function getInputVector(line) {
   const input = [
     line[1],
