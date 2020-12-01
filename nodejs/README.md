@@ -29,3 +29,4 @@ Nome: André Marcelino de Souza Neves
       - and
       - or
       - xor
+      - flags
