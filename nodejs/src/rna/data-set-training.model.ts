@@ -1,3 +1,7 @@
 import { DataSample } from "./data-sample.model";
 
-export type DataSetTraining = { data: DataSample[]; times: number };
+export type DataSetTraining = {
+  data: DataSample[];
+  qtdHiddenLayers: number;
+  times: number;
+};

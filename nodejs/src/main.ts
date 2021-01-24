@@ -31,21 +31,24 @@ function train(dataSetTraining: DataSetTraining, rnaType: string) {
   const times = dataSetTraining.times;
   const data = dataSetTraining.data;
 
-  const rna: RNA = getRNAObject(data, rnaType);
+  const rna: RNA = getRNAObject(dataSetTraining, rnaType);
   const trainer = new RNATrainerService(times, data, rna);
 
   trainer.train();
 }
 
-function getRNAObject(data: DataSample[], rnaType: string) {
-  const qtd_in = data[0].in.length;
-  const qtd_out = data[0].out.length;
+function getRNAObject(dataSetTraining: DataSetTraining, rnaType: string) {
+  const data = dataSetTraining.data;
+
+  const qtdIn = data[0].in.length;
+  const qtdOut = data[0].out.length;
 
   if (rnaType === RNAType.MLP) {
-    return new MLP(qtd_in, qtd_out);
+    const qtdHiddenLayers = dataSetTraining.qtdHiddenLayers;
+    return new MLP(qtdIn, qtdHiddenLayers, qtdOut);
   }
 
-  return new Perceptron(qtd_in, qtd_out);
+  return new Perceptron(qtdIn, qtdOut);
 }
 
 function robot(): DataSetTraining {
@@ -60,6 +63,7 @@ function robot(): DataSetTraining {
       { in: [1, 1, 0], out: [1, 0] },
       { in: [1, 1, 1], out: [1, 0] },
     ],
+    qtdHiddenLayers: 5,
     times: 1000,
   };
 }
@@ -72,6 +76,7 @@ function and(): DataSetTraining {
       { in: [1, 0], out: [0] },
       { in: [1, 1], out: [1] },
     ],
+    qtdHiddenLayers: 1,
     times: 1000,
   };
 }
@@ -84,6 +89,7 @@ function or(): DataSetTraining {
       { in: [1, 0], out: [1] },
       { in: [1, 1], out: [1] },
     ],
+    qtdHiddenLayers: 1,
     times: 1000,
   };
 }
@@ -96,10 +102,18 @@ function xor(): DataSetTraining {
       { in: [1, 0], out: [1] },
       { in: [1, 1], out: [0] },
     ],
+    qtdHiddenLayers: 1,
     times: 1000,
   };
 }
 
 function flags(): DataSetTraining {
-  return { data: readFlags(), times: 1000 };
+  const data = readFlags();
+
+  const qtdIn = data[0].in.length;
+  const qtdOut = data[0].out.length;
+
+  const qtdHiddenLayers = (qtdIn + qtdOut) / 2;
+
+  return { data, qtdHiddenLayers, times: 1000 };
 }
