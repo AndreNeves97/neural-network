@@ -2,15 +2,9 @@ import { Random } from "../../random";
 import { RNA } from "../rna.interface";
 
 export class Perceptron implements RNA {
-  qtd_in: number;
-  qtd_out: number;
-
   weights: number[][];
 
-  constructor(qtd_in: number, qtd_out: number) {
-    this.qtd_in = qtd_in;
-    this.qtd_out = qtd_out;
-
+  constructor(public qtd_in: number, public qtd_out: number) {
     this.weights = this.generateWeightsMatrix(qtd_in, qtd_out);
   }
 

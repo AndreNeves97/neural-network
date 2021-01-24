@@ -1,8 +1,10 @@
 import { readFlags } from "./flags/read-flags";
 import { DataSample } from "./rna/data-sample.model";
 import { DataSetTraining } from "./rna/data-set-training.model";
+import { MLP } from "./rna/mlp/mlp.model";
 import { Perceptron } from "./rna/perceptron/perceptron.model";
 import { RNATrainerService } from "./rna/rna-trainer.service";
+import { RNAType } from "./rna/rna-type.enum";
 import { RNA } from "./rna/rna.interface";
 
 main();
@@ -12,6 +14,7 @@ function main() {
 
   const args = process.argv.slice(2);
   const problem = args[0];
+  const rnaType = args[1];
 
   const problems = { robot, and, or, xor, flags };
 
@@ -21,22 +24,26 @@ function main() {
   }
 
   const dataSetTraining: DataSetTraining = problems[problem].apply(this);
-  train(dataSetTraining);
+  train(dataSetTraining, rnaType);
 }
 
-function train(dataSetTraining: DataSetTraining) {
+function train(dataSetTraining: DataSetTraining, rnaType: string) {
   const times = dataSetTraining.times;
   const data = dataSetTraining.data;
 
-  const rna: RNA = getRNAObject(data);
+  const rna: RNA = getRNAObject(data, rnaType);
   const trainer = new RNATrainerService(times, data, rna);
 
   trainer.train();
 }
 
-function getRNAObject(data: DataSample[]) {
+function getRNAObject(data: DataSample[], rnaType: string) {
   const qtd_in = data[0].in.length;
   const qtd_out = data[0].out.length;
+
+  if (rnaType === RNAType.MLP) {
+    return new MLP(qtd_in, qtd_out);
+  }
 
   return new Perceptron(qtd_in, qtd_out);
 }

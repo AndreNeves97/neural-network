@@ -54,7 +54,7 @@ export class RNATrainerService {
   getErrorClassification(y_vector, o_vector) {
     const sum_threshold_error = o_vector
       .map(this.getThresholdValue)
-      .map((threshold_value, i) => Math.abs(y_vector[i] - threshold_value))
+      .map((ot, i) => Math.abs(y_vector[i] - ot))
       .reduce((sum, error) => sum + error);
 
     if (sum_threshold_error > 0) {
