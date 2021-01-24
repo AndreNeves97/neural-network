@@ -1,4 +1,4 @@
-import { Random } from "../../random";
+import { Random } from "../../utils/random";
 import { RNA } from "../rna.interface";
 
 export class Perceptron implements RNA {
@@ -53,10 +53,8 @@ export class Perceptron implements RNA {
     });
   }
 
-  getNeuronInputSum(x_vector, neuron_weights: number[]) {
-    return neuron_weights.reduce(
-      (sum, weight, i) => sum + weight * x_vector[i]
-    );
+  getNeuronInputSum(x_vector, weights: number[]) {
+    return weights.reduce((sum, weight, i) => sum + weight * x_vector[i], 0);
   }
 
   activationFunction(u) {

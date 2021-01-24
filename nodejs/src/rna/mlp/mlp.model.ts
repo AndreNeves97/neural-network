@@ -1,5 +1,6 @@
-import { Random } from "../../random";
+import { Random } from "../../utils/random";
 import { RNA } from "../rna.interface";
+import { AuxMath } from "../../utils/math/aux-math";
 
 export class MLP implements RNA {
   wHidden: number[][];
@@ -20,11 +21,29 @@ export class MLP implements RNA {
     return Array.from({ length }, () => Random.getDouble(-0.3, 0.3));
   }
 
-  get ni() {
-    return 0.3;
+  train(x: number[], y: number[]): number[] {
+    const xVector = [...x, 1];
+    const yVector = [...y];
+
+
+    const oVector = this.getOutputVector(xVector);
+
+    return oVector;
   }
 
-  train(x: number[], y: number[]): number[] {
-    throw new Error("Method not implemented.");
+  getOutputVector(xVector: number[]) {
+    const uVectorHidden = AuxMath.multiplyVectorAndMatrix(
+      xVector,
+      this.wHidden
+    );
+
+    const hVector = [...uVectorHidden.map((u) => AuxMath.sigmoid(u)), 1];
+
+    const uVectorOutput = AuxMath.multiplyVectorAndMatrix(
+      hVector,
+      this.wOutput
+    );
+
+    return uVectorOutput.map((u) => AuxMath.sigmoid(u));
   }
 }
