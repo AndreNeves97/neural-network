@@ -1,28 +1,14 @@
 import { DataSample } from "./data-sample.model";
-import { Perceptron } from "./perceptron/perceptron.model";
+import { RNA } from "./rna.interface";
 
 export class RNATrainerService {
-  times: number;
-  qtd_in: number;
-  qtd_out: number;
-  data: DataSample[];
-
-  perceptron: Perceptron;
-
-  constructor(times: number, data: DataSample[]) {
-    const qtd_in = data[0].in.length;
-    const qtd_out = data[0].out.length;
-
-    this.times = times;
-    this.qtd_in = qtd_in;
-    this.qtd_out = qtd_out;
-    this.data = data;
-  }
+  constructor(
+    public times: number,
+    public data: DataSample[],
+    public rna: RNA
+  ) {}
 
   train() {
-    const ni = 0.001;
-    this.perceptron = new Perceptron(this.qtd_in, this.qtd_out, ni);
-
     console.log("Época \t|\t Erro de aproximação \t|\t Erro de classificação ");
     console.log("----- \t|\t ------------------- \t|\t ----------------------");
     console.log("      \t|\t                     \t|\t                       ");
@@ -32,7 +18,7 @@ export class RNATrainerService {
     }
   }
 
-  trainEra(era_number) {
+  trainEra(era_number: number) {
     let error_approx_era: number = 0;
     let error_classification_era: number = 0;
 
@@ -42,7 +28,7 @@ export class RNATrainerService {
       const x_vector: number[] = sample.in;
       const y_vector: number[] = sample.out;
 
-      const o_vector: number[] = this.perceptron.train(x_vector, y_vector);
+      const o_vector: number[] = this.rna.train(x_vector, y_vector);
 
       const error_approx = this.getErrorApprox(y_vector, o_vector);
       const error_classification = this.getErrorClassification(
