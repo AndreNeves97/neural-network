@@ -103,7 +103,7 @@ function xor(): DataSetTraining {
       { in: [1, 1], out: [0] },
     ],
     qtdHiddenLayerNeurons: 4,
-    times: 1000,
+    times: 5000,
   };
 }
 

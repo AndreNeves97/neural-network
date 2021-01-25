@@ -12,7 +12,7 @@ export class MLP implements RNA {
   }
 
   get ni() {
-    return 0.001;
+    return 0.3;
   }
 
   generateWeightsMatrix(qtdIn: number, qtdOut: number): number[][] {
@@ -70,7 +70,7 @@ export class MLP implements RNA {
         0
       );
 
-      return h * (1 - h) * 1 + deltaOutputSum;
+      return h * (1 - h) * deltaOutputSum;
     });
   }
 

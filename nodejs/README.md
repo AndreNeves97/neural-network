@@ -22,11 +22,15 @@ Nome: André Marcelino de Souza Neves
 - Executar:
   - `yarn install` 
     - Atualizar dependências
-  - `yarn start {type}` 
+  - `yarn start {sample} {algorithm}` 
     - Executar aplicação
-    - `{type}` refere-se à qual base será treinada, que pode ser:
+    - `{sample}`: Qual base será treinada. Opções:
       - robot
       - and
       - or
       - xor
       - flags
+
+    - `{algorithm}`: Qual algoritmo será utilizado. Opções:
+      - mlp
+      - perceptron (opção padrão) 
