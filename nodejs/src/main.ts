@@ -44,7 +44,7 @@ function getRNAObject(dataSetTraining: DataSetTraining, rnaType: string) {
   const qtdOut = data[0].out.length;
 
   if (rnaType === RNAType.MLP) {
-    const qtdHiddenLayers = dataSetTraining.qtdHiddenLayers;
+    const qtdHiddenLayers = dataSetTraining.qtdHiddenLayerNeurons;
     return new MLP(qtdIn, qtdHiddenLayers, qtdOut);
   }
 
@@ -59,11 +59,11 @@ function robot(): DataSetTraining {
       { in: [0, 1, 0], out: [0, 1] },
       { in: [0, 1, 1], out: [0, 1] },
       { in: [1, 0, 0], out: [1, 0] },
-      { in: [1, 0, 1], out: [1, 1] },
+      { in: [1, 0, 1], out: [0, 1] },
       { in: [1, 1, 0], out: [1, 0] },
-      { in: [1, 1, 1], out: [1, 0] },
+      { in: [1, 1, 1], out: [0, 1] },
     ],
-    qtdHiddenLayers: 5,
+    qtdHiddenLayerNeurons: 5,
     times: 1000,
   };
 }
@@ -76,7 +76,7 @@ function and(): DataSetTraining {
       { in: [1, 0], out: [0] },
       { in: [1, 1], out: [1] },
     ],
-    qtdHiddenLayers: 1,
+    qtdHiddenLayerNeurons: 3,
     times: 1000,
   };
 }
@@ -89,7 +89,7 @@ function or(): DataSetTraining {
       { in: [1, 0], out: [1] },
       { in: [1, 1], out: [1] },
     ],
-    qtdHiddenLayers: 1,
+    qtdHiddenLayerNeurons: 3,
     times: 1000,
   };
 }
@@ -102,7 +102,7 @@ function xor(): DataSetTraining {
       { in: [1, 0], out: [1] },
       { in: [1, 1], out: [0] },
     ],
-    qtdHiddenLayers: 1,
+    qtdHiddenLayerNeurons: 4,
     times: 1000,
   };
 }
@@ -113,7 +113,7 @@ function flags(): DataSetTraining {
   const qtdIn = data[0].in.length;
   const qtdOut = data[0].out.length;
 
-  const qtdHiddenLayers = (qtdIn + qtdOut) / 2;
+  const qtdHiddenLayerNeurons = (qtdIn + qtdOut) / 2;
 
-  return { data, qtdHiddenLayers, times: 1000 };
+  return { data, qtdHiddenLayerNeurons, times: 1000 };
 }

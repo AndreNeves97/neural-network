@@ -45,9 +45,9 @@ export class RNATrainerService {
     );
   }
 
-  getErrorApprox(y_vector, output_vector) {
+  getErrorApprox(y_vector, o_vector) {
     return y_vector
-      .map((y, i) => Math.abs(y - output_vector[i]))
+      .map((y, i) => Math.abs(y - o_vector[i]))
       .reduce((sum, error) => sum + error);
   }
 
