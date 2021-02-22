@@ -1,4 +1,5 @@
 import { DataSample } from "../rna/data-sample.model";
+import { inputFlagsDataTranform } from "./input-data-transformer";
 
 const fs = require("fs");
 
@@ -37,39 +38,12 @@ function getOutputVector(line) {
   return output;
 }
 
-// Possibilidade de melhoria:
-//    Não usar índices para cor, e sim uma entrada para cada cor
 function getInputVector(line) {
-  const input = [
-    line[1],
-    line[2],
-    line[3],
-    line[4],
-    line[5],
-    line[7],
-    line[8],
-    line[9],
-    line[10],
-    line[11],
-    line[12],
-    line[13],
-    line[14],
-    line[15],
-    line[16],
-    getColourIndex(line[17]),
-    line[18],
-    line[19],
-    line[20],
-    line[21],
-    line[22],
-    line[23],
-    line[24],
-    line[25],
-    line[26],
-    line[27],
-    getColourIndex(line[28]),
-    getColourIndex(line[29]),
-  ].map((item, i) => {
+  const data = inputFlagsDataTranform(line);
+
+  const input = data.flat();
+
+  input.map((item, i) => {
     const value = parseInt(item);
     defineMinMaxValue(i, value);
 
@@ -77,27 +51,6 @@ function getInputVector(line) {
   });
 
   return input;
-}
-
-function getColourIndex(colour) {
-  const colours = [
-    "green",
-    "black",
-    "red",
-    "white",
-    "blue",
-    "gold",
-    "orange",
-    "brown",
-  ];
-
-  const index = colours.findIndex((item) => item === colour);
-
-  if (index === -1) {
-    return colours.length;
-  }
-
-  return index;
 }
 
 const min_values = [];

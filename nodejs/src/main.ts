@@ -103,7 +103,7 @@ function xor(): DataSetTraining {
       { in: [1, 1], out: [0] },
     ],
     qtdHiddenLayerNeurons: 4,
-    times: 5000,
+    times: 3000,
   };
 }
 
@@ -115,5 +115,5 @@ function flags(): DataSetTraining {
 
   const qtdHiddenLayerNeurons = (qtdIn + qtdOut) / 2;
 
-  return { data, qtdHiddenLayerNeurons, times: 1000 };
+  return { data, qtdHiddenLayerNeurons, times: 1 };
 }
