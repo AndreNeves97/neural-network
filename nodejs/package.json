@@ -6,12 +6,16 @@
   "dependencies": {
     "@types/node": "^14.14.6",
     "nodemon": "^2.0.4",
-    "random-normal": "^1.0.0",
-    "tsconfig": "^7.0.0"
+    "random-normal": "^1.0.0"
   },
   "scripts": {
     "compile:watch": "tsc --watch",
     "start:watch": "nodemon --inspect dist/main.js",
     "start": "tsc && node dist/main.js"
+  },
+  "devDependencies": {
+    "tsc": "*",
+    "tsconfig-paths": "^3.9.0",
+    "typescript": "^3.7.4"
   }
 }
