@@ -11,6 +11,8 @@ export class RNATrainerService {
   train() {
     this.printLogHeader();
 
+    this.data = this.data.sort((a) => (a.onlyTestSample === false ? -1 : 1));
+
     for (let e = 0; e < this.times; e++) {
       this.trainEpoch(e);
     }

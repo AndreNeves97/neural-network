@@ -115,5 +115,5 @@ function flags(): DataSetTraining {
 
   const qtdHiddenLayerNeurons = (qtdIn + qtdOut) / 2;
 
-  return { data, qtdHiddenLayerNeurons, times: 1 };
+  return { data, qtdHiddenLayerNeurons, times: 1000 };
 }

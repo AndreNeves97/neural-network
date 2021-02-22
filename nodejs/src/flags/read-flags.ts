@@ -20,6 +20,8 @@ export function readFlags(): DataSample[] {
   normalize(samples);
   SampleClass.splitIntoTestAndTrainSamples(samples);
 
+  samples.sort(() => Math.random() - 0.5);
+
   return samples;
 }
 
