@@ -22,6 +22,20 @@ export class Perceptron implements RNA {
     return Array.from({ length }, () => Random.getDouble(-0.3, 0.3));
   }
 
+  getOutput(x: number[]): number[] {
+    const x_vector = [1, ...x];
+    const y_vector = [...y];
+
+    const u_vector = this.getAllInputSum(
+      x_vector,
+      y_vector.length,
+      this.weights
+    );
+
+    const o_vector = u_vector.map((u) => this.activationFunction(u));
+    return o_vector;
+  }
+
   train(x: number[], y: number[]): number[] {
     const x_vector = [1, ...x];
     const y_vector = [...y];

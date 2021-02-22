@@ -25,11 +25,18 @@ export class MLP implements RNA {
     return Array.from({ length }, () => Random.getDouble(-0.3, 0.3));
   }
 
+  getOutput(x: number[]): number[] {
+    const xVector = [...x, 1];
+    const { oVector } = this.feedForward(xVector);
+
+    return oVector;
+  }
+
   train(x: number[], y: number[]): number[] {
     const xVector = [...x, 1];
     const yVector = [...y];
 
-    const { hVector, oVector } = this.getOutputVector(xVector);
+    const { hVector, oVector } = this.feedForward(xVector);
 
     const deltasWOutput = this.getOutputDeltas(yVector, oVector);
     const deltasWHidden = this.getHiddenLayerDeltas(deltasWOutput, hVector);
@@ -40,7 +47,7 @@ export class MLP implements RNA {
     return oVector;
   }
 
-  getOutputVector(xVector: number[]) {
+  private feedForward(xVector: number[]) {
     const uVectorHidden = AuxMath.multiplyVectorAndMatrix(
       xVector,
       this.wHidden

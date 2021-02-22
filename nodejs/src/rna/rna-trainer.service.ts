@@ -9,26 +9,27 @@ export class RNATrainerService {
   ) {}
 
   train() {
-    console.log("Época \t|\t Erro de aproximação \t|\t Erro de classificação ");
-    console.log("----- \t|\t ------------------- \t|\t ----------------------");
-    console.log("      \t|\t                     \t|\t                       ");
+    this.printLogHeader();
 
     for (let e = 0; e < this.times; e++) {
-      this.trainEra(e);
+      this.trainEpoch(e);
     }
+
+    console.log("\n");
   }
 
-  trainEra(era_number: number) {
-    let error_approx_era: number = 0;
-    let error_classification_era: number = 0;
+  trainEpoch(epoch_number: number) {
+    let error_approx_epoch_test: number = 0;
+    let error_classification_epoch_test: number = 0;
+
+    let error_approx_epoch_train: number = 0;
+    let error_classification_epoch_train: number = 0;
 
     for (let a = 0; a < this.data.length; a++) {
       const sample: DataSample = this.data[a];
 
-      const x_vector: number[] = sample.in;
       const y_vector: number[] = sample.out;
-
-      const o_vector: number[] = this.rna.train(x_vector, y_vector);
+      const o_vector: number[] = this.getOutputVector(sample);
 
       const error_approx = this.getErrorApprox(y_vector, o_vector);
       const error_classification = this.getErrorClassification(
@@ -36,13 +37,61 @@ export class RNATrainerService {
         o_vector
       );
 
-      error_approx_era += error_approx;
-      error_classification_era += error_classification;
+      if (sample.onlyTestSample) {
+        error_approx_epoch_test += error_approx;
+        error_classification_epoch_test += error_classification;
+        continue;
+      }
+
+      error_approx_epoch_train += error_approx;
+      error_classification_epoch_train += error_classification;
     }
 
+    this.printEpochErrorLog(epoch_number, [
+      error_approx_epoch_train,
+      error_classification_epoch_train,
+      error_approx_epoch_test,
+      error_classification_epoch_test,
+    ]);
+  }
+
+  printLogHeader() {
     console.log(
-      `${era_number} \t|\t ${error_approx_era} \t|\t ${error_classification_era} `
+      "  nº   |   eAproxTrain   |   eClassTrain   |   eAproxTest    |   eClassTest "
     );
+
+    console.log(
+      "------ | --------------- | --------------- | --------------- | --------------"
+    );
+    console.log(
+      "       |                 |                 |                 |"
+    );
+  }
+
+  printEpochErrorLog(epoch_number, errors) {
+    const formatted_errors = errors.map((error) =>
+      error.toLocaleString("pt-BR", {
+        minimumFractionDigits: 3,
+        maximumFractionDigits: 3,
+      })
+    );
+
+    const errors_line = formatted_errors.reduce(
+      (prev, cur) => `${prev}     |     ${cur}`
+    );
+
+    console.log(`  ${epoch_number}    |     ${errors_line}`);
+  }
+
+  getOutputVector(sample: DataSample) {
+    const x_vector: number[] = sample.in;
+    const y_vector: number[] = sample.out;
+
+    if (sample.onlyTestSample) {
+      return this.rna.getOutput(x_vector);
+    }
+
+    return this.rna.train(x_vector, y_vector);
   }
 
   getErrorApprox(y_vector, o_vector) {

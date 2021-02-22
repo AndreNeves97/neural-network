@@ -1,1 +1,5 @@
-export type DataSample = { in: number[]; out: number[] };
+export type DataSample = {
+  in: number[];
+  out: number[];
+  onlyTestSample?: boolean;
+};
