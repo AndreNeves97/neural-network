@@ -1,4 +1,5 @@
 import { DataSample } from "./data-sample.model";
+import { RNAResultPlotService } from "./rna-result-plot.service";
 import { RNA } from "./rna.interface";
 
 export class RNATrainerService {
@@ -13,19 +14,29 @@ export class RNATrainerService {
 
     this.data = this.data.sort((a) => (a.onlyTestSample === false ? -1 : 1));
 
+    const training_results: RNATrainingResult[] = [];
+
     for (let e = 0; e < this.times; e++) {
-      this.trainEpoch(e);
+      const result = this.trainEpoch();
+      training_results.push(result);
+
+      this.printEpochErrorLog(e, result);
     }
+
+    const plot_service = new RNAResultPlotService();
+    plot_service.plot(training_results, this.data);
 
     console.log("\n");
   }
 
-  trainEpoch(epoch_number: number) {
-    let error_approx_epoch_test: number = 0;
-    let error_classification_epoch_test: number = 0;
+  trainEpoch(): RNATrainingResult {
+    const result: RNATrainingResult = {
+      error_approx_epoch_test: 0,
+      error_classification_epoch_test: 0,
 
-    let error_approx_epoch_train: number = 0;
-    let error_classification_epoch_train: number = 0;
+      error_approx_epoch_training: 0,
+      error_classification_epoch_training: 0,
+    };
 
     for (let a = 0; a < this.data.length; a++) {
       const sample: DataSample = this.data[a];
@@ -40,21 +51,16 @@ export class RNATrainerService {
       );
 
       if (sample.onlyTestSample) {
-        error_approx_epoch_test += error_approx;
-        error_classification_epoch_test += error_classification;
+        result.error_approx_epoch_test += error_approx;
+        result.error_classification_epoch_test += error_classification;
         continue;
       }
 
-      error_approx_epoch_train += error_approx;
-      error_classification_epoch_train += error_classification;
+      result.error_approx_epoch_training += error_approx;
+      result.error_classification_epoch_training += error_classification;
     }
 
-    this.printEpochErrorLog(epoch_number, [
-      error_approx_epoch_train,
-      error_classification_epoch_train,
-      error_approx_epoch_test,
-      error_classification_epoch_test,
-    ]);
+    return result;
   }
 
   printLogHeader() {
@@ -70,8 +76,15 @@ export class RNATrainerService {
     );
   }
 
-  printEpochErrorLog(epoch_number, errors) {
-    const formatted_errors = errors.map((error) =>
+  printEpochErrorLog(epoch_number, errors: RNATrainingResult) {
+    const errors_vector = [
+      errors.error_approx_epoch_training,
+      errors.error_classification_epoch_training,
+      errors.error_approx_epoch_test,
+      errors.error_classification_epoch_test,
+    ];
+
+    const formatted_errors = errors_vector.map((error) =>
       error.toLocaleString("pt-BR", {
         minimumFractionDigits: 3,
         maximumFractionDigits: 3,
