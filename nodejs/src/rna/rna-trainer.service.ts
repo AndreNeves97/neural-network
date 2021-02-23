@@ -65,14 +65,14 @@ export class RNATrainerService {
 
   printLogHeader() {
     console.log(
-      "  nº   |   eAproxTrain   |   eClassTrain   |   eAproxTest    |   eClassTest "
+      "  nº   |  eAproxTraining  |  eClassTraining  |   eAproxTest    |   eClassTest "
     );
 
     console.log(
-      "------ | --------------- | --------------- | --------------- | --------------"
+      "------ | ---------------- | ---------------- | --------------- | --------------"
     );
     console.log(
-      "       |                 |                 |                 |"
+      "       |                  |                  |                 |"
     );
   }
 
@@ -92,7 +92,7 @@ export class RNATrainerService {
     );
 
     const errors_line = formatted_errors.reduce(
-      (prev, cur) => `${prev}     |     ${cur}`
+      (prev, cur) => `${prev}      |     ${cur}`
     );
 
     console.log(`  ${epoch_number}    |     ${errors_line}`);

@@ -1,29 +1,23 @@
 import { DataSample } from "./data-sample.model";
+import { plot as plotChart, Plot } from "nodeplotlib";
 
 export class RNAResultPlotService {
   plot(results: RNATrainingResult[], samples: DataSample[]) {
-    const {
-      classification_error_series_test,
-      classification_error_series_training,
-    } = this.getClassificationErrorSeries(results, samples);
-
-    const {
-      approx_error_series_test,
-      approx_error_series_training,
-    } = this.getApproxErrorSeries(results);
-
-    console.log(
-      classification_error_series_test,
-      classification_error_series_training
+    const classification_error_series = this.getClassificationErrorPlotSeries(
+      results,
+      samples
     );
 
-    console.log(approx_error_series_test, approx_error_series_training);
+    const approx_error_series = this.getApproxErrorPlotSeries(results);
+
+    plotChart(classification_error_series);
+    plotChart(approx_error_series);
   }
 
-  getClassificationErrorSeries(
+  getClassificationErrorPlotSeries(
     results: RNATrainingResult[],
     samples: DataSample[]
-  ) {
+  ): Plot[] {
     const num_samples = samples.length;
 
     const num_samples_test = samples.filter(
@@ -41,13 +35,21 @@ export class RNAResultPlotService {
         result.error_classification_epoch_training / num_samples_training
     );
 
-    return {
-      classification_error_series_test,
-      classification_error_series_training,
-    };
+    return [
+      {
+        y: classification_error_series_test,
+        type: "scatter",
+        name: "Classificação - Base de teste",
+      },
+      {
+        y: classification_error_series_training,
+        type: "scatter",
+        name: "Classificação - Base de treino",
+      },
+    ];
   }
 
-  getApproxErrorSeries(results: RNATrainingResult[]) {
+  getApproxErrorPlotSeries(results: RNATrainingResult[]): Plot[] {
     const max_error_test = results
       .map((result) => result.error_approx_epoch_test)
       .reduce((max, error) => Math.max(max, error));
@@ -64,9 +66,17 @@ export class RNAResultPlotService {
       (result) => result.error_approx_epoch_training / max_error_training
     );
 
-    return {
-      approx_error_series_test,
-      approx_error_series_training,
-    };
+    return [
+      {
+        y: approx_error_series_test,
+        type: "scatter",
+        name: "Aproximação - Base de teste",
+      },
+      {
+        y: approx_error_series_training,
+        type: "scatter",
+        name: "Aproximação - Base de treino",
+      },
+    ];
   }
 }
