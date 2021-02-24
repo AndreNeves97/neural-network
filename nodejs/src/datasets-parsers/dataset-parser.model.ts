@@ -25,6 +25,10 @@ export abstract class DatasetParser {
     this.normalize(samples);
     SampleClass.splitIntoTestAndTrainSamples(samples);
 
+    samples.forEach((sample, index) => {
+      sample.sample_index = index;
+    });
+
     samples.sort(() => Math.random() - 0.5);
 
     return samples;

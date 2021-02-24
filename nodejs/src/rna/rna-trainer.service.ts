@@ -25,6 +25,8 @@ export class RNATrainerService {
       // }
     }
 
+    this.printSamplesInfo();
+
     const plot_service = new RNAResultPlotService();
     plot_service.plot(training_results, this.data);
 
@@ -132,5 +134,119 @@ export class RNATrainerService {
 
   getThresholdValue(o) {
     return o < 0.5 ? 0 : 1;
+  }
+
+  printSamplesInfo() {
+    let training_samples_count = 0;
+    let training_samples_percent = 0;
+
+    let test_samples_count = 0;
+    let test_samples_percent = 0;
+
+    let total_samples = this.data.length;
+
+    const samples_count_per_classes = {};
+
+    this.data.forEach((sample) => {
+      if (!samples_count_per_classes[sample.class.sample_index]) {
+        samples_count_per_classes[sample.class.sample_index] = {
+          training: 0,
+          test: 0,
+          sample,
+        };
+      }
+
+      if (sample.onlyTestSample) {
+        test_samples_count++;
+        samples_count_per_classes[sample.class.sample_index].test++;
+      } else {
+        training_samples_count++;
+        samples_count_per_classes[sample.class.sample_index].training++;
+      }
+    });
+
+    training_samples_percent = (training_samples_count / total_samples) * 100;
+    test_samples_percent = (test_samples_count / total_samples) * 100;
+
+    Object.values(samples_count_per_classes).forEach((sample_info: any) => {
+      sample_info.test_percent =
+        sample_info.test / (sample_info.training + sample_info.test);
+
+      sample_info.training_percent =
+        sample_info.training / (sample_info.training + sample_info.test);
+    });
+
+    this.showSamplesInfoOutput({
+      training_samples_count,
+      training_samples_percent,
+      test_samples_count,
+      test_samples_percent,
+      samples_count_per_classes,
+    });
+  }
+
+  showSamplesInfoOutput({
+    training_samples_count,
+    training_samples_percent,
+    test_samples_count,
+    test_samples_percent,
+    samples_count_per_classes,
+  }) {
+    console.log("\n\n\n\n");
+
+    console.log("\n\n---------------------------------------");
+    console.log("              Samples Info");
+    console.log("---------------------------------------\n");
+
+    console.log(
+      "Traning samples:",
+      training_samples_count,
+      "(",
+      Math.ceil(training_samples_percent * 100) / 100,
+      "%)"
+    );
+    console.log(
+      "Test samples:",
+      test_samples_count,
+      "(",
+      Math.ceil(test_samples_percent * 100) / 100,
+      "%)"
+    );
+
+    console.log();
+
+    console.log("\n\n---------------------------------------");
+    console.log("  Distribuição de amostras por classe");
+    console.log("---------------------------------------");
+
+    Object.values(samples_count_per_classes).forEach(
+      (sample_info: any, index) => {
+        console.log(`\nAmostra`, index, ":");
+
+        console.log(
+          "   Training: ",
+          sample_info.training,
+          "(",
+          Math.ceil(sample_info.training_percent * 100) / 100,
+          "%)"
+        );
+
+        console.log(
+          "   Test: ",
+          sample_info.test,
+          "(",
+          Math.ceil(sample_info.test_percent * 100) / 100,
+          "%)"
+        );
+
+        console.log();
+      }
+    );
+
+    console.log("\n\n---------------------------------------");
+    console.log("          Ordem das amostras ");
+    console.log("---------------------------------------");
+
+    console.log(this.data.map((sample) => sample.sample_index));
   }
 }
