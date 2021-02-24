@@ -20,7 +20,9 @@ export class RNATrainerService {
       const result = this.trainEpoch();
       training_results.push(result);
 
+      // if (e % 500 === 0) {
       this.printEpochErrorLog(e, result);
+      // }
     }
 
     const plot_service = new RNAResultPlotService();
@@ -65,14 +67,14 @@ export class RNATrainerService {
 
   printLogHeader() {
     console.log(
-      "  nº   |  eAproxTraining  |  eClassTraining  |   eAproxTest    |   eClassTest "
+      "  nº\t|  eAproxTraining  |  eClassTraining  |   eAproxTest    |   eClassTest "
     );
 
     console.log(
-      "------ | ---------------- | ---------------- | --------------- | --------------"
+      "----\t| ---------------- | ---------------- | --------------- | --------------"
     );
     console.log(
-      "       |                  |                  |                 |"
+      "   \t|                  |                  |                 |"
     );
   }
 
@@ -95,7 +97,7 @@ export class RNATrainerService {
       (prev, cur) => `${prev}      |     ${cur}`
     );
 
-    console.log(`  ${epoch_number}    |     ${errors_line}`);
+    console.log(` ${epoch_number}\t|     ${errors_line}`);
   }
 
   getOutputVector(sample: DataSample) {
