@@ -1,5 +1,4 @@
-import { readFlags } from "./datasets/flags/read-flags";
-import { DataSample } from "./rna/data-sample.model";
+import { FlagsDatasetParser } from "./datasets-parsers/flags/flags-dataset-parser";
 import { DataSetTraining } from "./rna/data-set-training.model";
 import { MLP } from "./rna/mlp/mlp.model";
 import { Perceptron } from "./rna/perceptron/perceptron.model";
@@ -108,7 +107,12 @@ function xor(): DataSetTraining {
 }
 
 function flags(): DataSetTraining {
-  const data = readFlags();
+  const file_path =
+    __dirname.replace("dist", "src") + "/datasets/flags/flags.data";
+
+  const parser: FlagsDatasetParser = new FlagsDatasetParser();
+
+  const data = parser.readFile(file_path);
 
   const qtdIn = data[0].in.length;
   const qtdOut = data[0].out.length;
