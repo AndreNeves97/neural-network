@@ -1,3 +1,5 @@
+import { BalanceScaleDatasetParser } from "./datasets-parsers/balance-scale/balance-scale-dataset-parser";
+import { DatasetParser } from "./datasets-parsers/dataset-parser.model";
 import { FlagsDatasetParser } from "./datasets-parsers/flags/flags-dataset-parser";
 import { DataSetTraining } from "./rna/data-set-training.model";
 import { MLP } from "./rna/mlp/mlp.model";
@@ -15,7 +17,14 @@ function main() {
   const problem = args[0];
   const rnaType = args[1];
 
-  const problems = { robot, and, or, xor, flags };
+  const problems = {
+    robot,
+    and,
+    or,
+    xor,
+    flags,
+    "balance-scale": balanceScale,
+  };
 
   if (!problems.hasOwnProperty(problem)) {
     console.error(`[Error] Unimplemented problem: ${problem}`);
@@ -120,4 +129,21 @@ function flags(): DataSetTraining {
   const qtdHiddenLayerNeurons = (qtdIn + qtdOut) / 2;
 
   return { data, qtdHiddenLayerNeurons, times: 1000 };
+}
+
+function balanceScale(): DataSetTraining {
+  const file_path =
+    __dirname.replace("dist", "src") +
+    "/datasets/balance-scale/balance-scale.data";
+
+  const parser: BalanceScaleDatasetParser = new BalanceScaleDatasetParser();
+
+  const data = parser.readFile(file_path);
+
+  const qtdIn = data[0].in.length;
+  const qtdOut = data[0].out.length;
+
+  const qtdHiddenLayerNeurons = (qtdIn + qtdOut) / 2;
+
+  return { data, qtdHiddenLayerNeurons, times: 30000 };
 }

@@ -1,4 +1,3 @@
-import { DataSample } from "../../rna/data-sample.model";
 import { DatasetParser } from "../dataset-parser.model";
 
 export class FlagsDatasetParser extends DatasetParser {
@@ -14,17 +13,14 @@ export class FlagsDatasetParser extends DatasetParser {
   getInputVector(line): number[] {
     const data = this.inputFlagsDataTranform(line);
 
-    console.log(line, data);
     const input = data.flat();
 
-    input.map((item, i) => {
+    return input.map((item, i) => {
       const value = parseInt(item);
       super.defineMinMaxValue(i, value);
 
       return value;
     });
-
-    return input;
   }
 
   inputFlagsDataTranform(line): any[] {
