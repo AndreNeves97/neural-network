@@ -1,5 +1,5 @@
-import { DataSample } from "../rna/data-sample.model";
-import { SampleClass } from "../rna/sample-class.model";
+import { DataSample } from "../../rna/data-sample.model";
+import { SampleClass } from "../../rna/sample-class.model";
 import { inputFlagsDataTranform } from "./input-data-transformer";
 
 const fs = require("fs");

@@ -1,4 +1,4 @@
-import { readFlags } from "./flags/read-flags";
+import { readFlags } from "./datasets/flags/read-flags";
 import { DataSample } from "./rna/data-sample.model";
 import { DataSetTraining } from "./rna/data-set-training.model";
 import { MLP } from "./rna/mlp/mlp.model";
