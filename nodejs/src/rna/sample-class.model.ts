@@ -1,6 +1,7 @@
 import { DataSample } from "./data-sample.model";
 
 export class SampleClass {
+  sample_index: number;
   samples: DataSample[];
 
   setTestAndTrainSamples() {
@@ -10,6 +11,7 @@ export class SampleClass {
 
     this.samples.forEach((sample, i) => {
       sample.onlyTestSample = i >= train_samples_count;
+      sample.class = this;
     });
   }
 
@@ -33,6 +35,7 @@ export class SampleClass {
 
       if (!classes[output_index]) {
         classes[output_index] = new SampleClass();
+        classes[output_index].sample_index = output_index;
         classes[output_index].samples = [];
       }
 

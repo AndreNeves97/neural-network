@@ -145,5 +145,5 @@ function balanceScale(): DataSetTraining {
 
   const qtdHiddenLayerNeurons = (qtdIn + qtdOut) / 2;
 
-  return { data, qtdHiddenLayerNeurons, times: 30000 };
+  return { data, qtdHiddenLayerNeurons, times: 1000 };
 }

@@ -2,7 +2,12 @@ import { DatasetParser } from "../dataset-parser.model";
 
 export class BalanceScaleDatasetParser extends DatasetParser {
   getInputVector(line): number[] {
-    const data = [line[1], line[2], line[3], line[4]];
+    const data = [
+      super.getEnumeratedAttributeInput(line[1], 1, 5),
+      super.getEnumeratedAttributeInput(line[2], 1, 5),
+      super.getEnumeratedAttributeInput(line[3], 1, 5),
+      super.getEnumeratedAttributeInput(line[4], 1, 5),
+    ];
 
     const input: any[] = data.flat();
 
