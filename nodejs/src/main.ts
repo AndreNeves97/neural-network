@@ -1,5 +1,5 @@
 import { BalanceScaleDatasetParser } from "./datasets-parsers/balance-scale/balance-scale-dataset-parser";
-import { DatasetParser } from "./datasets-parsers/dataset-parser.model";
+import { BreastCancerDatasetParser } from "./datasets-parsers/breast-cancer/breast-cancer-dataset-parser";
 import { FlagsDatasetParser } from "./datasets-parsers/flags/flags-dataset-parser";
 import { DataSetTraining } from "./rna/data-set-training.model";
 import { MLP } from "./rna/mlp/mlp.model";
@@ -25,6 +25,7 @@ function main() {
     xor,
     flags,
     "balance-scale": balanceScale,
+    "breast-cancer": breastCancer,
   };
 
   if (!problems.hasOwnProperty(problem)) {
@@ -140,6 +141,22 @@ function balanceScale(epochs): DataSetTraining {
     "/datasets/balance-scale/balance-scale.data";
 
   const parser: BalanceScaleDatasetParser = new BalanceScaleDatasetParser();
+
+  const data = parser.readFile(file_path);
+
+  const qtdIn = data[0].in.length;
+  const qtdOut = data[0].out.length;
+
+  const qtdHiddenLayerNeurons = (qtdIn + qtdOut) / 2;
+
+  return { data, qtdHiddenLayerNeurons, epochs: epochs || 1000 };
+}
+
+function breastCancer(epochs): DataSetTraining {
+  const file_path =
+    __dirname.replace("dist", "src") + "/datasets/breast-cancer/wdbc.data";
+
+  const parser: BreastCancerDatasetParser = new BreastCancerDatasetParser();
 
   const data = parser.readFile(file_path);
 

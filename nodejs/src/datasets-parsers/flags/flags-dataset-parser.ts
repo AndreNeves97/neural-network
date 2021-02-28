@@ -4,7 +4,7 @@ export class FlagsDatasetParser extends DatasetParser {
   getOutputVector(line): number[] {
     const output = Array.from({ length: 8 }, () => 0);
 
-    const output_index = parseInt(line[6]);
+    const output_index = parseFloat(line[6]);
     output[output_index] = 1;
 
     return output;
@@ -16,7 +16,7 @@ export class FlagsDatasetParser extends DatasetParser {
     const input = data.flat();
 
     return input.map((item, i) => {
-      const value = parseInt(item);
+      const value = parseFloat(item);
       super.defineMinMaxValue(i, value);
 
       return value;
