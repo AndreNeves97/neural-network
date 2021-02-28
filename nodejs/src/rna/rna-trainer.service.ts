@@ -4,7 +4,7 @@ import { RNA } from "./rna.interface";
 
 export class RNATrainerService {
   constructor(
-    public times: number,
+    public epochs: number,
     public data: DataSample[],
     public rna: RNA
   ) {}
@@ -16,7 +16,7 @@ export class RNATrainerService {
 
     const training_results: RNATrainingResult[] = [];
 
-    for (let e = 0; e < this.times; e++) {
+    for (let e = 0; e < this.epochs; e++) {
       const result = this.trainEpoch();
       training_results.push(result);
 
@@ -221,7 +221,7 @@ export class RNATrainerService {
 
     Object.values(samples_count_per_classes).forEach(
       (sample_info: any, index) => {
-        console.log(`\nAmostra`, index, ":");
+        console.log(`\nClasse`, index, ":");
 
         console.log(
           "   Training: ",

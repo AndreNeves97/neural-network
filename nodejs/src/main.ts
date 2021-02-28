@@ -16,6 +16,7 @@ function main() {
   const args = process.argv.slice(2);
   const problem = args[0];
   const rnaType = args[1];
+  const epochs = args[2];
 
   const problems = {
     robot,
@@ -31,16 +32,18 @@ function main() {
     return process.exit();
   }
 
-  const dataSetTraining: DataSetTraining = problems[problem].apply(this);
+  const dataSetTraining: DataSetTraining = problems[problem].apply(this, [
+    epochs,
+  ]);
   train(dataSetTraining, rnaType);
 }
 
 function train(dataSetTraining: DataSetTraining, rnaType: string) {
-  const times = dataSetTraining.times;
+  const epochs = dataSetTraining.epochs;
   const data = dataSetTraining.data;
 
   const rna: RNA = getRNAObject(dataSetTraining, rnaType);
-  const trainer = new RNATrainerService(times, data, rna);
+  const trainer = new RNATrainerService(epochs, data, rna);
 
   trainer.train();
 }
@@ -59,7 +62,7 @@ function getRNAObject(dataSetTraining: DataSetTraining, rnaType: string) {
   return new Perceptron(qtdIn, qtdOut);
 }
 
-function robot(): DataSetTraining {
+function robot(epochs): DataSetTraining {
   return {
     data: [
       { in: [0, 0, 0], out: [1, 1] },
@@ -72,11 +75,11 @@ function robot(): DataSetTraining {
       { in: [1, 1, 1], out: [0, 1] },
     ],
     qtdHiddenLayerNeurons: 5,
-    times: 1000,
+    epochs: epochs || 1000,
   };
 }
 
-function and(): DataSetTraining {
+function and(epochs): DataSetTraining {
   return {
     data: [
       { in: [0, 0], out: [0] },
@@ -85,11 +88,11 @@ function and(): DataSetTraining {
       { in: [1, 1], out: [1] },
     ],
     qtdHiddenLayerNeurons: 3,
-    times: 1000,
+    epochs: epochs || 1000,
   };
 }
 
-function or(): DataSetTraining {
+function or(epochs): DataSetTraining {
   return {
     data: [
       { in: [0, 0], out: [0] },
@@ -98,11 +101,11 @@ function or(): DataSetTraining {
       { in: [1, 1], out: [1] },
     ],
     qtdHiddenLayerNeurons: 3,
-    times: 1000,
+    epochs: epochs || 1000,
   };
 }
 
-function xor(): DataSetTraining {
+function xor(epochs): DataSetTraining {
   return {
     data: [
       { in: [0, 0], out: [0] },
@@ -111,11 +114,11 @@ function xor(): DataSetTraining {
       { in: [1, 1], out: [0] },
     ],
     qtdHiddenLayerNeurons: 4,
-    times: 3000,
+    epochs: epochs || 3000,
   };
 }
 
-function flags(): DataSetTraining {
+function flags(epochs): DataSetTraining {
   const file_path =
     __dirname.replace("dist", "src") + "/datasets/flags/flags.data";
 
@@ -128,10 +131,10 @@ function flags(): DataSetTraining {
 
   const qtdHiddenLayerNeurons = (qtdIn + qtdOut) / 2;
 
-  return { data, qtdHiddenLayerNeurons, times: 1000 };
+  return { data, qtdHiddenLayerNeurons, epochs: epochs || 30000 };
 }
 
-function balanceScale(): DataSetTraining {
+function balanceScale(epochs): DataSetTraining {
   const file_path =
     __dirname.replace("dist", "src") +
     "/datasets/balance-scale/balance-scale.data";
@@ -145,5 +148,5 @@ function balanceScale(): DataSetTraining {
 
   const qtdHiddenLayerNeurons = (qtdIn + qtdOut) / 2;
 
-  return { data, qtdHiddenLayerNeurons, times: 1000 };
+  return { data, qtdHiddenLayerNeurons, epochs: epochs || 1000 };
 }
