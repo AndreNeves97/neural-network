@@ -6,13 +6,18 @@ export class MLP implements RNA {
   wHidden: number[][];
   wOutput: number[][];
 
-  constructor(public qtdIn: number, public qtdH, public qtdOut: number) {
+  constructor(
+    public qtdIn: number,
+    public qtdH,
+    public qtdOut: number,
+    public useQuadraticError: boolean
+  ) {
     this.wHidden = this.generateWeightsMatrix(qtdIn, qtdH);
     this.wOutput = this.generateWeightsMatrix(qtdH, qtdOut);
   }
 
   get ni() {
-    return 0.3;
+    return 0.001;
   }
 
   generateWeightsMatrix(qtdIn: number, qtdOut: number): number[][] {
@@ -66,7 +71,23 @@ export class MLP implements RNA {
   }
 
   getOutputDeltas(yVector, oVector): number[] {
-    return oVector.map((o, i) => o * (1 - o) * (yVector[i] - o));
+    return oVector.map((o, i) => {
+      return this.getOutputDelta(o, yVector[i]);
+    });
+  }
+
+  getOutputDelta(o, y) {
+    if (this.useQuadraticError) {
+      let signal = 1;
+
+      if (y - o < 0) {
+        signal = -1;
+      }
+
+      return o * (1 - o) * Math.pow(y - o, 2) * signal;
+    }
+
+    return o * (1 - o) * (y - o);
   }
 
   getHiddenLayerDeltas(deltasWOutput, hVector): number[] {

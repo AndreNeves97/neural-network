@@ -7,13 +7,13 @@ export abstract class DatasetParser {
   min_values = [];
   max_values = [];
 
-  readFile(file_path): DataSample[] {
+  readFile(file_path, noNormalize): DataSample[] {
     const data = fs.readFileSync(file_path).toString();
 
-    return this.parseData(data);
+    return this.parseData(data, noNormalize);
   }
 
-  parseData(data: string): DataSample[] {
+  parseData(data: string, noNormalize: boolean): DataSample[] {
     const samples: DataSample[] = data
       .split("\n")
       .filter((line) => line !== "")
@@ -22,7 +22,10 @@ export abstract class DatasetParser {
         return this.transformLineToSample(line_vector);
       });
 
-    this.normalize(samples);
+    if (!noNormalize) {
+      this.normalize(samples);
+    }
+
     SampleClass.splitIntoTestAndTrainSamples(samples);
 
     samples.forEach((sample, index) => {
