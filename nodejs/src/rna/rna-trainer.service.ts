@@ -16,9 +16,7 @@ export class RNATrainerService {
   train() {
     this.printLogHeader();
 
-    this.data = this.dataSetTraining.data.sort((a) =>
-      a.onlyTestSample === false ? -1 : 1
-    );
+    this.data = this.dataSetTraining.data;
 
     const training_results: RNATrainingResult[] = [];
 
@@ -129,7 +127,7 @@ export class RNATrainerService {
 
   getErrorClassification(y_vector, o_vector) {
     const sum_threshold_error = o_vector
-      .map(this.getThresholdValue)
+      .map((o) => this.getThresholdValue(o))
       .map((ot, i) => Math.abs(y_vector[i] - ot))
       .reduce((sum, error) => sum + error);
 
@@ -141,7 +139,9 @@ export class RNATrainerService {
   }
 
   getThresholdValue(o) {
-    return o < 0.5 ? 0 : 1;
+    return o < 0.5
+      ? this.dataSetTraining.min_output
+      : this.dataSetTraining.max_output;
   }
 
   printSamplesInfo() {
