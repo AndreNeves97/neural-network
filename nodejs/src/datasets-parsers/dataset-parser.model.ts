@@ -49,6 +49,16 @@ export abstract class DatasetParser {
   abstract getInputVector(line: any[]): number[];
   abstract getOutputVector(line: any[]): number[];
 
+  normalize(samples: DataSample[]) {
+    samples.forEach((sample) => {
+      sample.in.forEach((value, i) => {
+        this.defineMinMaxValue(i, value);
+      });
+
+      this.normalizeSample(sample);
+    });
+  }
+
   defineMinMaxValue(inputIndex, value) {
     if (
       this.min_values[inputIndex] === undefined ||
@@ -63,10 +73,6 @@ export abstract class DatasetParser {
     ) {
       this.max_values[inputIndex] = value;
     }
-  }
-
-  normalize(samples: DataSample[]) {
-    samples.forEach((sample) => this.normalizeSample(sample));
   }
 
   normalizeSample(sample) {

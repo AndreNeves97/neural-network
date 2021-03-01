@@ -14,13 +14,7 @@ export class FlagsDatasetParser extends DatasetParser {
     const data = this.inputFlagsDataTranform(line);
 
     const input = data.flat();
-
-    return input.map((item, i) => {
-      const value = parseFloat(item);
-      super.defineMinMaxValue(i, value);
-
-      return value;
-    });
+    return input.map((item, i) => parseFloat(item));
   }
 
   inputFlagsDataTranform(line): any[] {

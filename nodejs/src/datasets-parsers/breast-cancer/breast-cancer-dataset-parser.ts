@@ -5,13 +5,7 @@ export class BreastCancerDatasetParser extends DatasetParser {
     const data = line.slice(2);
 
     const input: any[] = data.flat();
-
-    return input.map((item, i) => {
-      const value = parseFloat(item);
-      super.defineMinMaxValue(i, value);
-
-      return value;
-    });
+    return input.map((item) => parseFloat(item));
   }
 
   getOutputVector(line): number[] {

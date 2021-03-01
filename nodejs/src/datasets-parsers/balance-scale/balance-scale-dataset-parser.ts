@@ -10,13 +10,7 @@ export class BalanceScaleDatasetParser extends DatasetParser {
     ];
 
     const input: any[] = data.flat();
-
-    return input.map((item, i) => {
-      const value = parseInt(item);
-      super.defineMinMaxValue(i, value);
-
-      return value;
-    });
+    return input.map((item, i) => parseInt(item));
   }
 
   getOutputVector(line): number[] {
