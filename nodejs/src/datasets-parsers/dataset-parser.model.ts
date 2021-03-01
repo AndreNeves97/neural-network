@@ -4,16 +4,13 @@ import { SampleClass } from "../rna/sample-class.model";
 const fs = require("fs");
 
 export abstract class DatasetParser {
-  min_values = [];
-  max_values = [];
-
-  readFile(file_path, noNormalize): DataSample[] {
+  readFile(file_path): DataSample[] {
     const data = fs.readFileSync(file_path).toString();
 
-    return this.parseData(data, noNormalize);
+    return this.parseData(data);
   }
 
-  parseData(data: string, noNormalize: boolean): DataSample[] {
+  parseData(data: string): DataSample[] {
     const samples: DataSample[] = data
       .split("\n")
       .filter((line) => line !== "")
@@ -21,18 +18,6 @@ export abstract class DatasetParser {
         const line_vector = line.split(",");
         return this.transformLineToSample(line_vector);
       });
-
-    if (!noNormalize) {
-      this.normalize(samples);
-    }
-
-    SampleClass.splitIntoTestAndTrainSamples(samples);
-
-    samples.forEach((sample, index) => {
-      sample.sample_index = index;
-    });
-
-    samples.sort(() => Math.random() - 0.5);
 
     return samples;
   }
@@ -48,44 +33,6 @@ export abstract class DatasetParser {
 
   abstract getInputVector(line: any[]): number[];
   abstract getOutputVector(line: any[]): number[];
-
-  normalize(samples: DataSample[]) {
-    samples.forEach((sample) => {
-      sample.in.forEach((value, i) => {
-        this.defineMinMaxValue(i, value);
-      });
-
-      this.normalizeSample(sample);
-    });
-  }
-
-  defineMinMaxValue(inputIndex, value) {
-    if (
-      this.min_values[inputIndex] === undefined ||
-      value < this.min_values[inputIndex]
-    ) {
-      this.min_values[inputIndex] = value;
-    }
-
-    if (
-      this.max_values[inputIndex] === undefined ||
-      value > this.max_values[inputIndex]
-    ) {
-      this.max_values[inputIndex] = value;
-    }
-  }
-
-  normalizeSample(sample) {
-    sample.in = sample.in.map((input, index) => {
-      const diff = this.max_values[index] - this.min_values[index];
-
-      if (diff === 0) {
-        return 1;
-      }
-
-      return (input - this.min_values[index]) / diff;
-    });
-  }
 
   getEnumeratedAttributeInput(index: string, min: number, max: number) {
     const output = Array.from({ length: max - min + 1 }, (_, index) => 0);

@@ -18,9 +18,9 @@ const problems = {
   "breast-cancer": breastCancer,
 };
 
-main(problems);
+main();
 
-async function main(problems) {
+async function main() {
   const args = getExecutionArgs();
   const { problem, rnaType, epochs } = args;
 
@@ -35,12 +35,20 @@ async function main(problems) {
     return process.exit();
   }
 
-  const dataSetTraining: DataSetTraining = problems[problem].apply(this, [
-    epochs,
-    args["--no-normalize"],
-  ]);
+  const dataSetTraining = getDataSetTraining(problem, epochs);
 
-  train(dataSetTraining, rnaType, !args["--no-quadratic-error"]);
+  dataSetTraining.optimizeSamples(
+    !args["--no-normalize"],
+    !args["--no-dislocated-output"],
+    !args["--no-balanced-classes"]
+  );
+
+  train(
+    dataSetTraining,
+    rnaType,
+    !args["--no-quadratic-error"],
+    !args["--no-charts"]
+  );
 }
 
 function getExecutionArgs() {
@@ -59,6 +67,7 @@ function getExecutionArgs() {
     "--no-dislocated-output",
     "--no-balanced-classes",
     "--no-quadratic-error",
+    "--no-charts",
   ];
 
   const optionsValues = {};
@@ -78,14 +87,18 @@ function getExecutionArgs() {
 function train(
   dataSetTraining: DataSetTraining,
   rnaType: string,
-  useQuadraticError: boolean
+  useQuadraticError: boolean,
+  showCharts: boolean
 ) {
   const epochs = dataSetTraining.epochs;
-  const data = dataSetTraining.data;
-
   const rna: RNA = getRNAObject(dataSetTraining, rnaType, useQuadraticError);
-  const trainer = new RNATrainerService(epochs, data, rna);
 
+  const trainer = new RNATrainerService(
+    epochs,
+    dataSetTraining,
+    rna,
+    showCharts
+  );
   trainer.train();
 }
 
@@ -107,8 +120,12 @@ function getRNAObject(
   return new Perceptron(qtdIn, qtdOut);
 }
 
+function getDataSetTraining(chosenProblem, chosenEpochs): DataSetTraining {
+  return problems[chosenProblem].apply(this, [chosenEpochs]);
+}
+
 function robot(epochs): DataSetTraining {
-  return {
+  return DataSetTraining.getInstance({
     data: [
       { in: [0, 0, 0], out: [1, 1] },
       { in: [0, 0, 1], out: [0, 1] },
@@ -121,11 +138,11 @@ function robot(epochs): DataSetTraining {
     ],
     qtdHiddenLayerNeurons: 5,
     epochs: epochs || 1000,
-  };
+  });
 }
 
 function and(epochs): DataSetTraining {
-  return {
+  return DataSetTraining.getInstance({
     data: [
       { in: [0, 0], out: [0] },
       { in: [0, 1], out: [0] },
@@ -134,11 +151,11 @@ function and(epochs): DataSetTraining {
     ],
     qtdHiddenLayerNeurons: 3,
     epochs: epochs || 1000,
-  };
+  });
 }
 
 function or(epochs): DataSetTraining {
-  return {
+  return DataSetTraining.getInstance({
     data: [
       { in: [0, 0], out: [0] },
       { in: [0, 1], out: [1] },
@@ -147,11 +164,11 @@ function or(epochs): DataSetTraining {
     ],
     qtdHiddenLayerNeurons: 3,
     epochs: epochs || 1000,
-  };
+  });
 }
 
 function xor(epochs): DataSetTraining {
-  return {
+  return DataSetTraining.getInstance({
     data: [
       { in: [0, 0], out: [0] },
       { in: [0, 1], out: [1] },
@@ -160,54 +177,66 @@ function xor(epochs): DataSetTraining {
     ],
     qtdHiddenLayerNeurons: 4,
     epochs: epochs || 3000,
-  };
+  });
 }
 
-function flags(epochs, noNormalize): DataSetTraining {
+function flags(epochs): DataSetTraining {
   const file_path =
     __dirname.replace("dist", "src") + "/datasets/flags/flags.data";
 
   const parser: FlagsDatasetParser = new FlagsDatasetParser();
 
-  const data = parser.readFile(file_path, noNormalize);
+  const data = parser.readFile(file_path);
 
   const qtdIn = data[0].in.length;
   const qtdOut = data[0].out.length;
 
   const qtdHiddenLayerNeurons = (qtdIn + qtdOut) / 2;
 
-  return { data, qtdHiddenLayerNeurons, epochs: epochs || 30000 };
+  return DataSetTraining.getInstance({
+    data,
+    qtdHiddenLayerNeurons,
+    epochs: epochs || 30000,
+  });
 }
 
-function balanceScale(epochs, noNormalize): DataSetTraining {
+function balanceScale(epochs): DataSetTraining {
   const file_path =
     __dirname.replace("dist", "src") +
     "/datasets/balance-scale/balance-scale.data";
 
   const parser: BalanceScaleDatasetParser = new BalanceScaleDatasetParser();
 
-  const data = parser.readFile(file_path, noNormalize);
+  const data = parser.readFile(file_path);
 
   const qtdIn = data[0].in.length;
   const qtdOut = data[0].out.length;
 
   const qtdHiddenLayerNeurons = (qtdIn + qtdOut) / 2;
 
-  return { data, qtdHiddenLayerNeurons, epochs: epochs || 1000 };
+  return DataSetTraining.getInstance({
+    data,
+    qtdHiddenLayerNeurons,
+    epochs: epochs || 1000,
+  });
 }
 
-function breastCancer(epochs, noNormalize): DataSetTraining {
+function breastCancer(epochs): DataSetTraining {
   const file_path =
     __dirname.replace("dist", "src") + "/datasets/breast-cancer/wdbc.data";
 
   const parser: BreastCancerDatasetParser = new BreastCancerDatasetParser();
 
-  const data = parser.readFile(file_path, noNormalize);
+  const data = parser.readFile(file_path);
 
   const qtdIn = data[0].in.length;
   const qtdOut = data[0].out.length;
 
   const qtdHiddenLayerNeurons = (qtdIn + qtdOut) / 2;
 
-  return { data, qtdHiddenLayerNeurons, epochs: epochs || 1000 };
+  return DataSetTraining.getInstance({
+    data,
+    qtdHiddenLayerNeurons,
+    epochs: epochs || 1000,
+  });
 }

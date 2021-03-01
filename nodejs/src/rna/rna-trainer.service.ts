@@ -1,18 +1,24 @@
 import { DataSample } from "./data-sample.model";
+import { DataSetTraining } from "./data-set-training.model";
 import { RNAResultPlotService } from "./rna-result-plot.service";
 import { RNA } from "./rna.interface";
 
 export class RNATrainerService {
+  private data: DataSample[];
+
   constructor(
     public epochs: number,
-    public data: DataSample[],
-    public rna: RNA
+    public dataSetTraining: DataSetTraining,
+    public rna: RNA,
+    public showCharts: boolean
   ) {}
 
   train() {
     this.printLogHeader();
 
-    this.data = this.data.sort((a) => (a.onlyTestSample === false ? -1 : 1));
+    this.data = this.dataSetTraining.data.sort((a) =>
+      a.onlyTestSample === false ? -1 : 1
+    );
 
     const training_results: RNATrainingResult[] = [];
 
@@ -27,8 +33,10 @@ export class RNATrainerService {
 
     this.printSamplesInfo();
 
-    const plot_service = new RNAResultPlotService();
-    plot_service.plot(training_results, this.data);
+    if (this.showCharts) {
+      const plot_service = new RNAResultPlotService();
+      plot_service.plot(training_results, this.data);
+    }
 
     console.log("\n");
   }
@@ -221,7 +229,8 @@ export class RNATrainerService {
 
     Object.values(samples_count_per_classes).forEach(
       (sample_info: any, index) => {
-        console.log(`\nClasse`, index, ":");
+        const total_samples = sample_info.training + sample_info.test;
+        console.log(`\nClasse`, index, ": (", total_samples, "samples )");
 
         console.log(
           "   Training: ",
