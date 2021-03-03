@@ -31,17 +31,22 @@ export class DataSetTraining {
   optimizeSamples(
     normalize: boolean,
     dislocateOutputs: boolean,
-    balanceClasses
+    balanceClasses: boolean
   ) {
-    if (balanceClasses) {
-      // balance
-    }
-
     if (normalize) {
       this.normalize();
     }
 
-    SampleClass.splitIntoTestAndTrainSamples(this.data);
+    const classes = SampleClass.splitSamplesClasses(this.data);
+
+    if (balanceClasses) {
+      SampleClass.balanceClasses(classes);
+      this.data = classes
+        .map((class_obj) => class_obj[1].samples)
+        .reduce((prev, curr) => [...prev, ...curr]);
+    }
+
+    SampleClass.splitIntoTestAndTrainSamples(classes);
 
     this.data.forEach((sample, index) => {
       sample.sample_index = index;
