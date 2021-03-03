@@ -1,3 +1,4 @@
+import { Random } from "../utils/random";
 import { DataSample } from "./data-sample.model";
 import { SampleClass } from "./sample-class.model";
 
@@ -56,7 +57,7 @@ export class DataSetTraining {
       this.dislocateSamplesOutput();
     }
 
-    this.data.sort(() => Math.random() - 0.5);
+    this.data.sort(() => Random.getDouble(-0.5, 0.5));
     this.data.sort((a) => (a.onlyTestSample === false ? -1 : 1));
 
     this.setMinAndMaxOutputValues();

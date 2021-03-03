@@ -1,3 +1,4 @@
+import { Random } from "../utils/random";
 import { DataSample } from "./data-sample.model";
 
 export type SampleClassesEntry = [string, SampleClass];
@@ -73,7 +74,14 @@ export class SampleClass {
     for (let i = 0; i < samples_count_diff; i++) {
       const sample = this.samples[i];
 
-      this.samples.push({ ...sample });
+      const noise = Random.getGaussian();
+
+      const new_sample = {
+        ...sample,
+        in: sample.in.map((value) => value + noise),
+      };
+
+      this.samples.push(new_sample);
     }
   }
 }
