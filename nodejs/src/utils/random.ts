@@ -21,7 +21,7 @@ export class Random {
     return Math.random() * (max - min) + min;
   }
 
-  static getGaussian() {
-    return randomNormal();
+  static getGaussian(options: { mean?: number; dev?: number } = null) {
+    return randomNormal(options);
   }
 }

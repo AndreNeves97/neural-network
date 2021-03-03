@@ -74,14 +74,29 @@ export class SampleClass {
     for (let i = 0; i < samples_count_diff; i++) {
       const sample = this.samples[i];
 
-      const noise = Random.getGaussian();
-
       const new_sample = {
         ...sample,
-        in: sample.in.map((value) => value + noise),
+        in: this.getNewSampleInputs(sample),
       };
 
       this.samples.push(new_sample);
     }
+  }
+
+  getNewSampleInputs(sample) {
+    return sample.in.map((value) => {
+      const noise = Random.getGaussian({ mean: 0, dev: 0.02 });
+      const new_value = value + noise;
+
+      if (new_value > 1) {
+        return 1;
+      }
+
+      if (new_value < 0) {
+        return 0;
+      }
+
+      return new_value;
+    });
   }
 }
