@@ -10,8 +10,25 @@ export class RNAResultPlotService {
 
     const approx_error_series = this.getApproxErrorPlotSeries(results);
 
-    plotChart(classification_error_series);
-    plotChart(approx_error_series);
+    plotChart(classification_error_series, {
+      title: "Erro de classificação",
+      xaxis: {
+        title: "Época",
+      },
+      yaxis: {
+        title: "Erro proporcional",
+      },
+    });
+
+    plotChart(approx_error_series, {
+      title: "Erro de aproximação",
+      xaxis: {
+        title: "Época",
+      },
+      yaxis: {
+        title: "Erro proporcionalproporcional",
+      },
+    });
   }
 
   getClassificationErrorPlotSeries(
@@ -39,12 +56,12 @@ export class RNAResultPlotService {
       {
         y: classification_error_series_test,
         type: "scatter",
-        name: "Classificação - Base de teste",
+        name: "Base de teste",
       },
       {
         y: classification_error_series_training,
         type: "scatter",
-        name: "Classificação - Base de treino",
+        name: "Base de treino",
       },
     ];
   }
@@ -70,12 +87,12 @@ export class RNAResultPlotService {
       {
         y: approx_error_series_test,
         type: "scatter",
-        name: "Aproximação - Base de teste",
+        name: "Base de teste",
       },
       {
         y: approx_error_series_training,
         type: "scatter",
-        name: "Aproximação - Base de treino",
+        name: "Base de treino",
       },
     ];
   }
